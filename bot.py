@@ -41,7 +41,9 @@ class Bot(Client):
         temp.BANNED_CHATS = b_chats
         await super().start()
         from database.ia_filterdb import ensure_indexes
-    await ensure_indexes()
+        await ensure_indexes()   ✅  # CORRECT INDENTATION
+        me = await self.get_me()
+    
         me = await self.get_me()
         temp.ME = me.id
         temp.U_NAME = me.username
