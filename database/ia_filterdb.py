@@ -8,7 +8,16 @@ from umongo import Instance, Document, fields
 from motor.motor_asyncio import AsyncIOMotorClient
 from marshmallow.exceptions import ValidationError
 from info import DATABASE_URI, DATABASE_NAME, COLLECTION_NAME, USE_CAPTION_FILTER
-
+async def ensure_indexes():
+    if db is None:
+        logger.error("Database connection is not initialized.")
+        return
+    try:
+        await Media.ensure_indexes()
+        logger.info("Indexes ensured on Media collection.")
+    except Exception as e:
+        logger.exception(f"Error while ensuring indexes: {e}")
+        
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
