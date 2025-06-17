@@ -35,19 +35,13 @@ class Bot(Client):
             sleep_threshold=5,
         )
 
-    async def start(self):
+        async def start(self):
         b_users, b_chats = await db.get_banned()
         temp.BANNED_USERS = b_users
         temp.BANNED_CHATS = b_chats
-                await super().start()
+        await super().start()  # ✅ CORRECT indentation
         from database.ia_filterdb import ensure_indexes
-        await ensure_indexes()   # <== ✅ FIXED HERE
-        me = await self.get_me()
-        
-        from database.ia_filterdb import ensure_indexes
-        await ensure_indexes()   ✅  # CORRECT INDENTATION
-        me = await self.get_me()
-    
+        await ensure_indexes()
         me = await self.get_me()
         temp.ME = me.id
         temp.U_NAME = me.username
@@ -59,6 +53,7 @@ class Bot(Client):
         await web.TCPSite(app, bind_address, PORT).start()
         logging.info(f"{me.first_name} with for Pyrogram v{__version__} (Layer {layer}) started on {me.username}.")
         logging.info(LOG_STR)
+        
 
     async def stop(self, *args):
         await super().stop()
