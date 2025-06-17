@@ -9,10 +9,10 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from marshmallow.exceptions import ValidationError
 from info import DATABASE_URI, DATABASE_NAME, COLLECTION_NAME, USE_CAPTION_FILTER
 async def ensure_indexes():
-    if db is None:
-        logger.error("Database connection is not initialized.")
-        return
     try:
+        # This will fail if the DB connection is broken
+        await db.command("ping")
+        
         await Media.ensure_indexes()
         logger.info("Indexes ensured on Media collection.")
     except Exception as e:
