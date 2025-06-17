@@ -89,3 +89,22 @@ async def list_chats(client, message):
     async for chat in chats:
         text += f"{chat['title']} | ID: {chat['id']}\n"
     await message.reply(text)
+@Client.on_message((filters.group | filters.private) & filters.text & filters.incoming)
+async def auto_filter(client, message):
+    if message.text.startswith("/"):
+        return
+    settings = await get_settings(message.chat.id)
+    if len(message.text) < 3:
+        return
+    files, offset, total_results = await get_search_results(message.text.strip(), offset=0, filter=True)
+    if not files:
+        return
+    buttons = [
+        [InlineKeyboardButton(f"{file.file_name}", callback_data=f"file#{file.file_id}")]
+        for file in files
+    ]
+    if offset:
+        buttons.append([
+            InlineKeyboardButton("Next", callback_data=f"next_0_{message.text.strip()}_{offset}")
+        ])
+    await message.reply("Here are the results:", reply_markup=InlineKeyboardMarkup(buttons))
